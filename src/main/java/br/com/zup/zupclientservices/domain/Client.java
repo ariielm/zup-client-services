@@ -9,7 +9,8 @@ import java.time.LocalDate;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "client_seq")
+    @SequenceGenerator(name = "client_seq", sequenceName = "client_seq", allocationSize = 1)
     private long id;
 
     @NotNull
@@ -22,7 +23,7 @@ public class Client {
 
     private String postalCode;
 
-    private int number;
+    private Integer number;
 
     private String compĺement;
 
@@ -66,11 +67,11 @@ public class Client {
         this.postalCode = postalCode;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 

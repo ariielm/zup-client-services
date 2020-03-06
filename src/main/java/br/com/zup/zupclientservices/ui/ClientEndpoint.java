@@ -12,13 +12,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Optional;
 
 import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 
 @RestController
-@RequestMapping(path = "rs/clients", produces= HAL_JSON_VALUE)
+@RequestMapping(path = ClientEndpoint.PATH, produces= HAL_JSON_VALUE)
 public class ClientEndpoint {
+
+    static final String PATH = "/rs/clients";
 
     private ClientRepository repository;
 
@@ -54,7 +57,7 @@ public class ClientEndpoint {
     @PostMapping
     public ResponseEntity<ClientResource> createClient(@Valid @RequestBody ClientResource resource) {
         Client client = repository.saveAndFlush(entityAssembler.toEntity(resource));
-        return ResponseEntity.ok(resourceAssembler.toModel(client));
+        return ResponseEntity.created(URI.create(ClientEndpoint.PATH + "/" + client.getId())).build();
     }
 
     @PutMapping("/{id}")
@@ -63,9 +66,9 @@ public class ClientEndpoint {
         if (repository.findById(id).isPresent()) {
             resource.setId(id);
 
-            Client client = repository.saveAndFlush(entityAssembler.toEntity(resource));
+            repository.saveAndFlush(entityAssembler.toEntity(resource));
 
-            return ResponseEntity.ok(resourceAssembler.toModel(client));
+            return ResponseEntity.ok().location(URI.create(ClientEndpoint.PATH + "/" + id)).build();
         }
 
         return ResponseEntity.notFound().build();

@@ -2,21 +2,24 @@ package br.com.zup.zupclientservices.ui;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class ClientResource extends RepresentationModel<ClientResource> {
 
     private long id;
 
+    @NotNull
     private String name;
 
+    @NotNull
     private String cpf;
 
     private LocalDate birthDate;
 
     private String postalCode;
 
-    private int number;
+    private Integer number;
 
     private String compĺement;
 
@@ -60,11 +63,11 @@ public class ClientResource extends RepresentationModel<ClientResource> {
         this.postalCode = postalCode;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
