@@ -1,22 +1,17 @@
 # zup-client-services
 
-A project containing all the Zup client resource services.
+A **RESTful Java application** containing the responsible services for managing the Zup clients.
+
+This project was created only for technical evaluation purposes.
 
 ## Table of Contents
 
-* [Description](#description)
 * [Technologies](#technologies)
 * [Pre-requisites](#pre-requisites)
 * [Build](#build)
 * [Run](#run)
 * [Automated Tests](#automated-tests)
 * [Manual Tests](#manual-tests)
-
-## Description
-
-A **RESTful Java application** containing the responsible services for managing the Zup clients.
-
-This project was created only to technical evaluation purposes.
 
 ## Technologies
 
@@ -25,6 +20,7 @@ This project was created only to technical evaluation purposes.
 * Spring Web, JPA, Actuator, HATEOAS
 * PostgreSQL 
 * Docker
+* Postman
 
 ## Pre-requisites
 
@@ -32,6 +28,10 @@ This project was created only to technical evaluation purposes.
 2. Docker installed. 
 
 ## Build
+
+```bash
+./mvnw clean package
+```
 
 ## Run
 
