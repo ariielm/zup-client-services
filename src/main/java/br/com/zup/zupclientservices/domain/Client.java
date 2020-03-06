@@ -25,7 +25,7 @@ public class Client {
 
     private Integer number;
 
-    private String compĺement;
+    private String complement;
 
     public long getId() {
         return id;
@@ -75,11 +75,11 @@ public class Client {
         this.number = number;
     }
 
-    public String getCompĺement() {
-        return compĺement;
+    public String getComplement() {
+        return complement;
     }
 
-    public void setCompĺement(String compĺement) {
-        this.compĺement = compĺement;
+    public void setComplement(String complement) {
+        this.complement = complement;
     }
 }

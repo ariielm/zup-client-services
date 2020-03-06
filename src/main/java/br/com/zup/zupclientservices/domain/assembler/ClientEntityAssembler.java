@@ -16,7 +16,7 @@ public class ClientEntityAssembler {
         client.setBirthDate(resource.getBirthDate());
         client.setPostalCode(resource.getPostalCode());
         client.setNumber(resource.getNumber());
-        client.setCompĺement(resource.getCompĺement());
+        client.setComplement(resource.getComplement());
 
         return client;
     }
