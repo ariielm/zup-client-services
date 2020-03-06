@@ -21,7 +21,7 @@ public class ClientResource extends RepresentationModel<ClientResource> {
 
     private Integer number;
 
-    private String compĺement;
+    private String complement;
 
     public long getId() {
         return id;
@@ -71,11 +71,11 @@ public class ClientResource extends RepresentationModel<ClientResource> {
         this.number = number;
     }
 
-    public String getCompĺement() {
-        return compĺement;
+    public String getComplement() {
+        return complement;
     }
 
-    public void setCompĺement(String compĺement) {
-        this.compĺement = compĺement;
+    public void setComplement(String complement) {
+        this.complement = complement;
     }
 }

@@ -24,7 +24,7 @@ public class ClientResourceAssembler extends RepresentationModelAssemblerSupport
         resource.setBirthDate(entity.getBirthDate());
         resource.setPostalCode(entity.getPostalCode());
         resource.setNumber(entity.getNumber());
-        resource.setCompĺement(entity.getCompĺement());
+        resource.setComplement(entity.getComplement());
 
         resource.add(linkTo(
                 methodOn(ClientEndpoint.class)

@@ -22,23 +22,46 @@ class ZupClientServicesApplicationTests {
     int port;
 
     @Test
-    void shouldReturnAllClients() {
+    void shouldReturnAllClientsPaginated() {
         given().port(port)
                 .get("rs/clients")
                 .then()
                 .statusCode(OK.value())
-                .contentType(HAL_JSON_VALUE);
+                .contentType(HAL_JSON_VALUE)
+                .body("_embedded.clientResourceList", notNullValue())
+                .body("_links.self.href", endsWith("/rs/clients?page=0&size=20"))
+                .body("page.size", is(20))
+                .body("page.totalElements", greaterThanOrEqualTo(1))
+                .body("page.totalPages", greaterThanOrEqualTo(1))
+                .body("page.number", is(0));
     }
 
     @Test
-    void shouldReturnCreatedWithLocationToTheCreatedClient() {
-        given().port(port)
+    void shouldReturnCreatedWithLocationAndCreateClientWhenCreatingNewClient() {
+        String location =
+                given().port(port)
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/post-client.json"))
                 .post("rs/clients")
                 .then()
                 .statusCode(CREATED.value())
-                .header(LOCATION, matchesRegex("/rs/clients/[0-9]*"));
+                .header(LOCATION, matchesRegex("/rs/clients/[0-9]*"))
+                .extract()
+                .header(LOCATION);
+
+        given().port(port)
+                .get(location)
+                .then()
+                .statusCode(OK.value())
+                .contentType(HAL_JSON_VALUE)
+                .body("name", is("Sargento Bigode"))
+                .body("cpf", is("0123456789"))
+                .body("birthDate", is("2020-03-06"))
+                .body("postalCode", is("01001000"))
+                .body("number", is(1))
+                .body("complement", is("Apto. 417"))
+                .body("_links.self.href", endsWith(location));
+
     }
 
     @Test
@@ -50,18 +73,26 @@ class ZupClientServicesApplicationTests {
                 .contentType(HAL_JSON_VALUE)
                 .body("id", is(1))
                 .body("name", is("Dona Rosa"))
-                .body("cpf", is("01234567890"));
+                .body("cpf", is("01234567890"))
+                .body("birthDate", is("1960-10-31"))
+                .body("postalCode", is("01001000"))
+                .body("number", is(22))
+                .body("complement", is("Biblioteca"))
+                .body("_links.self.href", endsWith("/rs/clients/1"));
     }
 
     @Test
     void shouldReturnOkWithLocationAndUpdateClientWhenUpdatingClientThree() {
-        given().port(port)
+        String location = given()
+                .port(port)
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/put-client.json"))
                 .put("rs/clients/3")
                 .then()
                 .statusCode(OK.value())
-                .header(LOCATION, is("/rs/clients/3"));
+                .header(LOCATION, is("/rs/clients/3"))
+                .extract()
+                .header(LOCATION);
 
         given().port(port)
                 .get("rs/clients/3")
@@ -70,7 +101,12 @@ class ZupClientServicesApplicationTests {
                 .contentType(HAL_JSON_VALUE)
                 .body("id", is(3))
                 .body("name", is("Tony Gourmet"))
-                .body("cpf", is("98765432109"));
+                .body("cpf", is("98765432109"))
+                .body("birthDate", is("2000-01-01"))
+                .body("postalCode", is("01001000"))
+                .body("number", is(1))
+                .body("complement", is("Apto. 010"))
+                .body("_links.self.href", endsWith(location));
     }
 
     @Test
