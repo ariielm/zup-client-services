@@ -56,6 +56,10 @@ Then launch the application with Maven:
 ./mvnw spring-boot:run
 ```
 
+The application will execute on the port 8080: http://localhost:8080/actuator/info
+
+To check the services available, check the section [Manual Tests](#manual-tests).
+
 ## Automated Tests
 
 To check the tests and its results, run the Maven goal:
