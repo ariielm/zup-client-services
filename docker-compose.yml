@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_USER=client-services"
+      - "POSTGRES_PASSWORD=client-services-password"
+
+  zup-client-services:
+    image: ariielm/zup-client-services
+    container_name: zup-client-services
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres

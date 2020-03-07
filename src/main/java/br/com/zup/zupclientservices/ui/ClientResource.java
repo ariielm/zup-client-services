@@ -1,5 +1,6 @@
 package br.com.zup.zupclientservices.ui;
 
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.NotNull;
@@ -13,6 +14,7 @@ public class ClientResource extends RepresentationModel<ClientResource> {
     private String name;
 
     @NotNull
+    @CPF
     private String cpf;
 
     private LocalDate birthDate;

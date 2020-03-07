@@ -1,6 +1,7 @@
 package br.com.zup.zupclientservices.ui;
 
 import br.com.zup.zupclientservices.application.ClientRepository;
+import br.com.zup.zupclientservices.application.ClientService;
 import br.com.zup.zupclientservices.domain.Client;
 import br.com.zup.zupclientservices.domain.assembler.ClientEntityAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class ClientEndpoint {
 
     private ClientRepository repository;
 
+    private ClientService service;
+
     private ClientResourceAssembler resourceAssembler;
 
     private PagedResourcesAssembler<Client> pagedResourcesAssembler;
@@ -32,8 +35,9 @@ public class ClientEndpoint {
     private ClientEntityAssembler entityAssembler;
 
     @Autowired
-    public ClientEndpoint(ClientRepository repository, ClientResourceAssembler resourceAssembler, PagedResourcesAssembler<Client> pagedResourcesAssembler, ClientEntityAssembler entityAssembler) {
+    public ClientEndpoint(ClientRepository repository, ClientService service, ClientResourceAssembler resourceAssembler, PagedResourcesAssembler<Client> pagedResourcesAssembler, ClientEntityAssembler entityAssembler) {
         this.repository = repository;
+        this.service = service;
         this.resourceAssembler = resourceAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.entityAssembler = entityAssembler;
@@ -56,7 +60,7 @@ public class ClientEndpoint {
 
     @PostMapping
     public ResponseEntity<ClientResource> createClient(@Valid @RequestBody ClientResource resource) {
-        Client client = repository.saveAndFlush(entityAssembler.toEntity(resource));
+        Client client = service.create(entityAssembler.toEntity(resource));
         return ResponseEntity.created(URI.create(ClientEndpoint.PATH + "/" + client.getId())).build();
     }
 
@@ -66,7 +70,7 @@ public class ClientEndpoint {
         if (repository.findById(id).isPresent()) {
             resource.setId(id);
 
-            repository.saveAndFlush(entityAssembler.toEntity(resource));
+            service.update(entityAssembler.toEntity(resource));
 
             return ResponseEntity.ok().location(URI.create(ClientEndpoint.PATH + "/" + id)).build();
         }

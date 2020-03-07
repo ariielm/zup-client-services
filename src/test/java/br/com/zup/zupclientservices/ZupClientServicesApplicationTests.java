@@ -55,7 +55,7 @@ class ZupClientServicesApplicationTests {
                 .statusCode(OK.value())
                 .contentType(HAL_JSON_VALUE)
                 .body("name", is("Sargento Bigode"))
-                .body("cpf", is("0123456789"))
+                .body("cpf", is("45365884000"))
                 .body("birthDate", is("2020-03-06"))
                 .body("postalCode", is("01001000"))
                 .body("number", is(1))
@@ -101,7 +101,7 @@ class ZupClientServicesApplicationTests {
                 .contentType(HAL_JSON_VALUE)
                 .body("id", is(3))
                 .body("name", is("Tony Gourmet"))
-                .body("cpf", is("98765432109"))
+                .body("cpf", is("27434439874"))
                 .body("birthDate", is("2000-01-01"))
                 .body("postalCode", is("01001000"))
                 .body("number", is(1))
@@ -131,15 +131,36 @@ class ZupClientServicesApplicationTests {
     }
 
     @Test
-    void shouldReturnBadRequestWhenCreatingClientWithInvalidData() {
+    void shouldReturnBadRequestWhenCreatingClientWithInvalidCPF() {
         given().port(port)
                 .contentType(APPLICATION_JSON_VALUE)
-                .body(getFile("scenarios/post-invalid-client.json"))
+                .body(getFile("scenarios/post-invalid-client-cpf.json"))
                 .post("rs/clients")
                 .then()
                 .statusCode(BAD_REQUEST.value())
-                .body("errors[0].field", is("cpf"))
-                .body("errors[0].defaultMessage", is("must not be null"));
+                .body("errors[0]", is("cpf: invalid Brazilian individual taxpayer registry number (CPF)"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreatingClientWithAlreadyExistingCPF() {
+        given().port(port)
+                .contentType(APPLICATION_JSON_VALUE)
+                .body(getFile("scenarios/post-invalid-client-existing-cpf.json"))
+                .post("rs/clients")
+                .then()
+                .statusCode(BAD_REQUEST.value())
+                .body("errors[0]", is("cpf: already exists"));
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenCreatingClientWithInvalidBirthDate() {
+        given().port(port)
+                .contentType(APPLICATION_JSON_VALUE)
+                .body(getFile("scenarios/post-invalid-client-birthDate.json"))
+                .post("rs/clients")
+                .then()
+                .statusCode(BAD_REQUEST.value())
+                .body("errors[0]", is("birthDate: must be before than today"));
     }
 
     private final File getFile(String path) {
