@@ -1,5 +1,7 @@
 package br.com.zup.zupclientservices.domain;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -17,6 +19,7 @@ public class Client {
     private String name;
 
     @NotNull
+    @CPF
     private String cpf;
 
     private LocalDate birthDate;

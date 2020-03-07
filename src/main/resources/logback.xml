@@ -1,0 +1,25 @@
+<configuration debug="true" scan="true"
+               scanPeriod="150 seconds">
+    <property name="LOG_DIR" value="logs" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender" target="System.out">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d app=zup-client-services %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ASYNC_CONSOLE" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="CONSOLE" />
+        <neverBlock>true</neverBlock>
+    </appender>
+
+    <logger name="br.com.zup.zupclientservices.infrastructure.log" level="info" additivity="false">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </logger>
+
+    <root level="error">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </root>
+</configuration>
