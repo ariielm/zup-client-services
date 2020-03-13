@@ -59,8 +59,6 @@ Then launch the application with Maven:
 
 The application will execute on the port 8080: http://localhost:8080/actuator/info
 
-To check the services available, check the section [Manual Tests](#manual-tests).
-
 ## API Documentation
 
 Once the application is running, to see the documentation, just access:
