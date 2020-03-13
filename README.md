@@ -12,16 +12,17 @@ To check **only** the application running locally, jump to the section [Docker-c
 * [Pre-requisites](#pre-requisites)
 * [Build](#build)
 * [Run](#run)
+* [API Documentation](#api-documentation)
 * [Automated Tests](#automated-tests)
 * [Manual Tests](#manual-tests)
 * [Docker container](#run)
-* [Docker-compose (DB + application)](#docker-compose-database--application)
+* [Docker-compose (database + application)](#docker-compose-database--application)
 
 ## Technologies
 
 * [Java Development Kit 8](https://www.oracle.com/java/technologies/javase-jdk8-downloads.html)
 * [Spring Boot](https://spring.io/projects/spring-boot)
-* [Spring Web, JPA, Actuator, HATEOAS](https://spring.io/projects/)
+* [Spring Web, JPA, Actuator, HATEOAS, REST Docs](https://spring.io/projects/)
 * [Maven build tool](https://maven.apache.org/)
 * [PostgreSQL](https://www.postgresql.org/) 
 * [Postman](https://www.postman.com/)
@@ -60,6 +61,12 @@ The application will execute on the port 8080: http://localhost:8080/actuator/in
 
 To check the services available, check the section [Manual Tests](#manual-tests).
 
+## API Documentation
+
+Once the application is running, to see the documentation, just access:
+
+http://localhost:8080/docs/zup-client-services.html
+
 ## Automated Tests
 
 To check the tests and its results, run the Maven goal:
@@ -86,7 +93,7 @@ To execute the container, some problems may occur due to the database connection
 
 ## Docker-Compose (database + application)
 
-To check the docker container running locally with the complete environment, just run the [maven build](#build) command, then build the [docker image](#docker), and then run the [docker-compose](https://docs.docker.com/compose/install/) command (if the database container is still running, stop it):
+To check the docker container running locally with the complete environment, just execute the [maven build](#build) step, then execute the [docker image](#docker) step, and then run the [docker-compose](https://docs.docker.com/compose/install/) command (if the database container is still running, stop it):
 
 ```
 docker-compose up -d

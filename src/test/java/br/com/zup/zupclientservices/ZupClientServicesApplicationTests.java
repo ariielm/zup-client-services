@@ -1,9 +1,16 @@
 package br.com.zup.zupclientservices;
 
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.restdocs.RestDocumentationContextProvider;
+import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 
@@ -13,17 +20,37 @@ import static org.springframework.hateoas.MediaTypes.HAL_JSON_VALUE;
 import static org.springframework.http.HttpHeaders.LOCATION;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.document;
+import static org.springframework.restdocs.restassured3.RestAssuredRestDocumentation.documentationConfiguration;
 
 @Sql(scripts = "/sql/clients.sql")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ZupClientServicesApplicationTests {
 
     @LocalServerPort
     int port;
 
+    private static final String DOC_GUIDE = "crud";
+    private static final String DOC_GUIDE_POST = DOC_GUIDE + "-create";
+    private static final String DOC_GUIDE_GET = DOC_GUIDE + "-read";
+    private static final String DOC_GUIDE_PUT = DOC_GUIDE + "-update";
+    private static final String DOC_GUIDE_DELETE = DOC_GUIDE + "-delete";
+
+    private RequestSpecification spec;
+
+    @BeforeEach
+    public void setUp(RestDocumentationContextProvider restDocumentation) {
+        this.spec = new RequestSpecBuilder()
+                .addFilter(documentationConfiguration(restDocumentation))
+                .build();
+    }
+
+
     @Test
     void shouldReturnAllClientsPaginated() {
-        given().port(port)
+        given(this.spec).port(port)
+                .filter(document(DOC_GUIDE_GET))
                 .get("rs/clients")
                 .then()
                 .statusCode(OK.value())
@@ -39,17 +66,18 @@ class ZupClientServicesApplicationTests {
     @Test
     void shouldReturnCreatedWithLocationAndCreateClientWhenCreatingNewClient() {
         String location =
-                given().port(port)
-                .contentType(APPLICATION_JSON_VALUE)
-                .body(getFile("scenarios/post-client.json"))
-                .post("rs/clients")
-                .then()
-                .statusCode(CREATED.value())
-                .header(LOCATION, matchesRegex("/rs/clients/[0-9]*"))
-                .extract()
-                .header(LOCATION);
+                given(this.spec).port(port)
+                        .filter(document(DOC_GUIDE_POST))
+                        .contentType(APPLICATION_JSON_VALUE)
+                        .body(getFile("scenarios/post-client.json"))
+                        .post("rs/clients")
+                        .then()
+                        .statusCode(CREATED.value())
+                        .header(LOCATION, matchesRegex("/rs/clients/[0-9]*"))
+                        .extract()
+                        .header(LOCATION);
 
-        given().port(port)
+        given(this.spec).port(port)
                 .get(location)
                 .then()
                 .statusCode(OK.value())
@@ -66,7 +94,8 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnClientWithIdOne() {
-        given().port(port)
+        given(this.spec).port(port)
+                .filter(document(DOC_GUIDE))
                 .get("rs/clients/1")
                 .then()
                 .statusCode(OK.value())
@@ -83,8 +112,9 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnOkWithLocationAndUpdateClientWhenUpdatingClientThree() {
-        String location = given()
+        String location = given(this.spec)
                 .port(port)
+                .filter(document(DOC_GUIDE_PUT))
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/put-client.json"))
                 .put("rs/clients/3")
@@ -94,7 +124,7 @@ class ZupClientServicesApplicationTests {
                 .extract()
                 .header(LOCATION);
 
-        given().port(port)
+        given(this.spec).port(port)
                 .get("rs/clients/3")
                 .then()
                 .statusCode(OK.value())
@@ -111,12 +141,13 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldDeleteClientWithIdTwo() {
-        given().port(port)
+        given(this.spec).port(port)
+                .filter(document(DOC_GUIDE_DELETE))
                 .delete("rs/clients/2")
                 .then()
                 .statusCode(NO_CONTENT.value());
 
-        given().port(port)
+        given(this.spec).port(port)
                 .get("rs/clients/2")
                 .then()
                 .statusCode(NOT_FOUND.value());
@@ -124,7 +155,8 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnNotFoundWhenGettingNonExistingClient() {
-        given().port(port)
+        given(this.spec).port(port)
+                .filter(document(DOC_GUIDE))
                 .get("rs/clients/999")
                 .then()
                 .statusCode(NOT_FOUND.value());
@@ -132,7 +164,8 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnBadRequestWhenCreatingClientWithInvalidCPF() {
-        given().port(port)
+        given(this.spec).port(port)
+                .filter(document(DOC_GUIDE))
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/post-invalid-client-cpf.json"))
                 .post("rs/clients")
@@ -143,7 +176,7 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnBadRequestWhenCreatingClientWithAlreadyExistingCPF() {
-        given().port(port)
+        given(this.spec).port(port)
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/post-invalid-client-existing-cpf.json"))
                 .post("rs/clients")
@@ -154,7 +187,7 @@ class ZupClientServicesApplicationTests {
 
     @Test
     void shouldReturnBadRequestWhenCreatingClientWithInvalidBirthDate() {
-        given().port(port)
+        given(this.spec).port(port)
                 .contentType(APPLICATION_JSON_VALUE)
                 .body(getFile("scenarios/post-invalid-client-birthDate.json"))
                 .post("rs/clients")
