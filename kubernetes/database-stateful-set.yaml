@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zup-client-database-stateful-set
+spec:
+  serviceName: zup-client-database
+  selector:
+    matchLabels:
+      name: zup-client-database-pods
+  template:
+    metadata:
+      labels:
+        name: zup-client-database-pods
+    spec:
+      containers:
+        - name: zup-client-database
+          image: postgres
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "client-services"
+            - name: POSTGRES_PASSWORD
+              value: "client-services-password"
+          volumeMounts:
+            - name: volume-postgresql
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: volume-postgresql
+          persistentVolumeClaim:
+            claimName: psvm-postgresql
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: psvm-postgresql
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20M
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zup-client-database
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    name: zup-client-database-pods

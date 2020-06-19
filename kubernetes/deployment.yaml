@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zup-client-services-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: zup-client-services-pods
+  template:
+    metadata:
+      labels:
+        app: zup-client-services-pods
+    spec:
+      containers:
+        - name: zup-client-services
+          image: ariielm/zup-client-services
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zup-client-services-loadbalancer
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+      targetPort: 8080
+  selector:
+    app: zup-client-services-pods
